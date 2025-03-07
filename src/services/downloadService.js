@@ -3,11 +3,11 @@ const path = require("path");
 const fs = require("fs");
 const { subscribeToYouTubeLinks } = require("../utils/subscriber");
 
-const ytDlpPath = "C:\\Users\\navee\\OneDrive\\Desktop\\projects\\SpoTube\\backend\\utils\\yt-dlp.exe";
+const ytDlpPath = "yt-dlp";
 const DOWNLOAD_DIR = path.join(__dirname, "../../downloads");
 
 if (!fs.existsSync(DOWNLOAD_DIR)) {
-  fs.mkdirSync(DOWNLOAD_DIR);
+  fs.mkdirSync(DOWNLOAD_DIR, { recursive: true });
 }
 
 const extractVideoId = (link) => {
@@ -27,29 +27,22 @@ const downloadAndConvertToAudio = (link) => {
 
     const ytDlpProcess = spawn(ytDlpPath, [
       "-x",
-      "--audio-format",
-      "mp3",
-      "-o",
-      outputFilePath,
-      link,
+      "--audio-format", "mp3",
+      "-o", outputFilePath,
+      link
     ]);
 
     ytDlpProcess.on("close", (code) => {
       if (code === 0) {
-        console.log(`Download and conversion finished for ${link}`);
         resolve({ videoId, outputFilePath });
       } else {
-        reject(new Error(`yt-dlp process exited with code ${code}`));
+        reject(new Error(`yt-dlp process failed with code ${code}`));
       }
     });
 
-    ytDlpProcess.on("error", (err) => {
-      reject(err);
-    });
+    ytDlpProcess.on("error", (err) => reject(err));
 
-    ytDlpProcess.stderr.on("data", (data) => {
-      console.error(`yt-dlp error: ${data}`);
-    });
+    ytDlpProcess.stderr.on("data", (data) => { });
   });
 };
 
@@ -61,7 +54,6 @@ const processDownload = async (songLinks) => {
       const { videoId, outputFilePath } = await downloadAndConvertToAudio(link);
       downloadResults.push({ videoId, outputFilePath });
     } catch (error) {
-      console.error(`Error processing ${link}:`, error.message);
       downloadResults.push({ videoId: null, error: error.message });
     }
   }
@@ -70,30 +62,23 @@ const processDownload = async (songLinks) => {
 };
 
 const getAudioFilePaths = (ids) => {
-  return ids.map((id) => path.join(DOWNLOAD_DIR, `${id}.mp3`)).filter((filePath) => fs.existsSync(filePath));
+  return ids
+    .map((id) => path.join(DOWNLOAD_DIR, `${id}.mp3`))
+    .filter((filePath) => fs.existsSync(filePath));
 };
-
 
 const deleteAudioFiles = (filePaths) => {
   filePaths.forEach((filePath) => {
-    fs.unlink(filePath, (err) => {
-      if (err) console.error(`Error deleting ${filePath}:`, err);
-      else console.log(`Deleted file: ${filePath}`);
-    });
+    fs.unlink(filePath, (err) => { });
   });
 };
 
 const channel = "youtube:link";
 
 const handleYouTubeLink = async (link) => {
-  console.log("Received YouTube link:", link);
-
   try {
-    const results = await processDownload([link]);
-    console.log("Download results:", results);
-  } catch (error) {
-    console.error("Error processing YouTube link:", error);
-  }
+    await processDownload([link]);
+  } catch (error) { }
 };
 
 subscribeToYouTubeLinks(channel, handleYouTubeLink);
