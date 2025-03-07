@@ -15,10 +15,13 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "postinstall": "pip install yt-dlp && apt-get update && apt-get install -y ffmpeg"
+    "build": "mkdir -p /tmp/downloads"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "YouTube audio downloader service"
 }

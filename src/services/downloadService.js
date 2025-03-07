@@ -4,7 +4,8 @@ const fs = require("fs");
 const { subscribeToYouTubeLinks } = require("../utils/subscriber");
 
 const ytDlpPath = "yt-dlp";
-const DOWNLOAD_DIR = path.join(__dirname, "../../downloads");
+// const DOWNLOAD_DIR = path.join(__dirname, "../../downloads");
+const DOWNLOAD_DIR = '/tmp/downloads';
 
 if (!fs.existsSync(DOWNLOAD_DIR)) {
   fs.mkdirSync(DOWNLOAD_DIR, { recursive: true });
