@@ -5,6 +5,13 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+* text=auto
+*.js text eol=lf
+*.json text eol=lf
+*.sh text eol=lf
+*.bat text eol=crlf
+
+
 # Logs
 logs
 *.log

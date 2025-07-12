@@ -1,6 +1,7 @@
 {
   "name": "download_service",
   "version": "1.0.0",
+  "type": "module",
   "main": "server.js",
   "dependencies": {
     "archiver": "^7.0.1",

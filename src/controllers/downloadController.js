@@ -1,7 +1,7 @@
-const fs = require("fs");
-const path = require("path");
-const zipService = require("../services/zipService");
-const { getAudioFilePaths, deleteAudioFiles } = require("../services/downloadService");
+import fs from "fs";
+import path from "path";
+import { createZip, deleteZipFile } from "../services/zipService.js";
+import { getAudioFilePaths, deleteAudioFiles } from "../services/downloadService.js";
 
 const downloadAudioFiles = async (req, res) => {
   try {
@@ -17,7 +17,7 @@ const downloadAudioFiles = async (req, res) => {
       return res.status(404).json({ error: "No valid audio files found" });
     }
 
-    const zipFilePath = await zipService.createZip(filePaths);
+    const zipFilePath = await createZip(filePaths);
 
     res.download(zipFilePath, "audio_files.zip", (err) => {
       if (err) {
@@ -25,7 +25,7 @@ const downloadAudioFiles = async (req, res) => {
         return res.status(500).json({ error: "Error sending ZIP file" });
       }
 
-      zipService.deleteZipFile(zipFilePath);
+      deleteZipFile(zipFilePath);
       deleteAudioFiles(filePaths);
     });
 
@@ -35,4 +35,4 @@ const downloadAudioFiles = async (req, res) => {
   }
 };
 
-module.exports = { downloadAudioFiles };
+export { downloadAudioFiles };

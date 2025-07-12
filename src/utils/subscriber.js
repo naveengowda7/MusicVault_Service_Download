@@ -1,21 +1,20 @@
-const { createClient } = require('redis');
+import { createClient } from "redis";
 
 const client = createClient({
-  username: 'default',
-  password: 'hVsuxkFLreWnHflApANxVpB8vcwjZHD2',
+  username: "default",
+  password: "hVsuxkFLreWnHflApANxVpB8vcwjZHD2",
   socket: {
-    host: 'redis-14273.c301.ap-south-1-1.ec2.redns.redis-cloud.com',
-    port: 14273
-  }
+    host: "redis-14273.c301.ap-south-1-1.ec2.redns.redis-cloud.com",
+    port: 14273,
+  },
 });
 
-client.on('error', err => console.log('Redis Client Error', err));
-
+client.on("error", (err) => console.log("Redis Client Error", err));
 await client.connect();
 
 const subscribeToYouTubeLinks = async (channel, callback) => {
   try {
-    await redisSub.subscribe(channel, (message) => {
+    await client.subscribe(channel, (message) => {
       console.log(`Received message on ${channel}: ${message}`);
       callback(JSON.parse(message));
     });
@@ -25,4 +24,4 @@ const subscribeToYouTubeLinks = async (channel, callback) => {
   }
 };
 
-module.exports = { subscribeToYouTubeLinks };
+export { subscribeToYouTubeLinks };

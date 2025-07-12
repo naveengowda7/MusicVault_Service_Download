@@ -1,13 +1,12 @@
-const fs = require("fs");
-const path = require("path");
-const archiver = require("archiver");
-const os = require("os");
+import fs from "fs";
+import path from "path";
+import os from "os";
+import archiver from "archiver";
 
 const createZip = (filePaths) => {
   return new Promise((resolve, reject) => {
     const tempDir = os.tmpdir();
     const zipFilePath = path.join(tempDir, `audio_files_${Date.now()}.zip`);
-
     const output = fs.createWriteStream(zipFilePath);
     const archive = archiver("zip", { zlib: { level: 9 } });
 
@@ -17,7 +16,6 @@ const createZip = (filePaths) => {
     });
 
     archive.on("error", (err) => reject(err));
-
     archive.pipe(output);
 
     filePaths.forEach((file) => {
@@ -28,7 +26,6 @@ const createZip = (filePaths) => {
   });
 };
 
-
 const deleteZipFile = (zipFilePath) => {
   fs.unlink(zipFilePath, (err) => {
     if (err) console.error(`Error deleting ZIP file: ${err}`);
@@ -36,4 +33,4 @@ const deleteZipFile = (zipFilePath) => {
   });
 };
 
-module.exports = { createZip, deleteZipFile };
+export { createZip, deleteZipFile };

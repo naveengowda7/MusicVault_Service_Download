@@ -1,11 +1,10 @@
-const { spawn } = require("child_process");
-const path = require("path");
-const fs = require("fs");
-const { subscribeToYouTubeLinks } = require("../utils/subscriber");
+import { spawn } from "child_process";
+import path from "path";
+import fs from "fs";
+import { subscribeToYouTubeLinks } from "../utils/subscriber.js";
 
 const ytDlpPath = "yt-dlp";
-// const DOWNLOAD_DIR = path.join(__dirname, "../../downloads");
-const DOWNLOAD_DIR = '/tmp/downloads';
+const DOWNLOAD_DIR = "/tmp/downloads";
 
 if (!fs.existsSync(DOWNLOAD_DIR)) {
   fs.mkdirSync(DOWNLOAD_DIR, { recursive: true });
@@ -20,9 +19,7 @@ const extractVideoId = (link) => {
 const downloadAndConvertToAudio = (link) => {
   return new Promise((resolve, reject) => {
     const videoId = extractVideoId(link);
-    if (!videoId) {
-      return reject(new Error("Invalid YouTube link"));
-    }
+    if (!videoId) return reject(new Error("Invalid YouTube link"));
 
     const outputFilePath = path.join(DOWNLOAD_DIR, `${videoId}.mp3`);
 
@@ -34,22 +31,18 @@ const downloadAndConvertToAudio = (link) => {
     ]);
 
     ytDlpProcess.on("close", (code) => {
-      if (code === 0) {
-        resolve({ videoId, outputFilePath });
-      } else {
-        reject(new Error(`yt-dlp process failed with code ${code}`));
-      }
+      code === 0
+        ? resolve({ videoId, outputFilePath })
+        : reject(new Error(`yt-dlp process failed with code ${code}`));
     });
 
     ytDlpProcess.on("error", (err) => reject(err));
-
-    ytDlpProcess.stderr.on("data", (data) => { });
+    ytDlpProcess.stderr.on("data", () => { });
   });
 };
 
 const processDownload = async (songLinks) => {
   const downloadResults = [];
-
   for (const link of songLinks) {
     try {
       const { videoId, outputFilePath } = await downloadAndConvertToAudio(link);
@@ -58,7 +51,6 @@ const processDownload = async (songLinks) => {
       downloadResults.push({ videoId: null, error: error.message });
     }
   }
-
   return downloadResults;
 };
 
@@ -70,7 +62,7 @@ const getAudioFilePaths = (ids) => {
 
 const deleteAudioFiles = (filePaths) => {
   filePaths.forEach((filePath) => {
-    fs.unlink(filePath, (err) => { });
+    fs.unlink(filePath, () => { });
   });
 };
 
@@ -79,9 +71,9 @@ const channel = "youtube:link";
 const handleYouTubeLink = async (link) => {
   try {
     await processDownload([link]);
-  } catch (error) { }
+  } catch (_) { }
 };
 
 subscribeToYouTubeLinks(channel, handleYouTubeLink);
 
-module.exports = { processDownload, getAudioFilePaths, deleteAudioFiles };
+export { processDownload, getAudioFilePaths, deleteAudioFiles };
