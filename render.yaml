@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: youtube-downloader
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: REDIS_ID
+        value: 9916545887
+      - key: PORT
+        value: 10000

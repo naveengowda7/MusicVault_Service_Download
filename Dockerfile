@@ -1,26 +1,32 @@
-FROM node:16-slim
+FROM node:18-alpine
 
+# Install system dependencies
+RUN apk add --no-cache \
+  python3 \
+  py3-pip \
+  ffmpeg \
+  wget
+
+# Install yt-dlp
+RUN pip3 install yt-dlp
+
+# Create app directory
 WORKDIR /app
 
-# Install Python & yt-dlp using pip
-RUN apt-get update && apt-get install -y python3-pip && rm -rf /var/lib/apt/lists/*
-RUN pip3 install -U yt-dlp
-
-# Download Precompiled ffmpeg & Extract it to /usr/local/bin
-RUN curl -L https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz | tar -xJf - --strip-components=1 -C /usr/local/bin
-
-# Copy package files & install Node.js dependencies
+# Copy package files
 COPY package*.json ./
-RUN npm install --omit=dev
 
-# Copy application code
+# Install dependencies
+RUN npm ci --only=production
+
+# Copy source code
 COPY . .
 
-# Create temp downloads directory
-RUN mkdir -p /tmp/downloads
+# Create downloads and temp directories
+RUN mkdir -p /tmp/downloads && mkdir -p temp
 
 # Expose port
-EXPOSE 3000
+EXPOSE $PORT
 
 # Start the application
 CMD ["npm", "start"]
