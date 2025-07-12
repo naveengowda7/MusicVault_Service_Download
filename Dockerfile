@@ -5,10 +5,14 @@ RUN apk add --no-cache \
   python3 \
   py3-pip \
   ffmpeg \
-  wget
+  wget \
+  gcc \
+  musl-dev \
+  python3-dev
 
-# Install yt-dlp
-RUN pip3 install yt-dlp
+# Create a symbolic link for pip3 and install yt-dlp
+RUN python3 -m pip install --upgrade pip && \
+  python3 -m pip install yt-dlp
 
 # Create app directory
 WORKDIR /app
