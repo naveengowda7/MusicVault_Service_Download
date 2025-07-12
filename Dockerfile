@@ -25,7 +25,8 @@ COPY . .
 # Create downloads and temp directories
 RUN mkdir -p /tmp/downloads && mkdir -p temp
 
-# Expose port
+# Use PORT environment variable (Render will override this)
+ENV PORT=5000
 EXPOSE $PORT
 
 # Start the application
