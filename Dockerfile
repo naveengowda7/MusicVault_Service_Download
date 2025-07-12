@@ -5,14 +5,10 @@ RUN apk add --no-cache \
   python3 \
   py3-pip \
   ffmpeg \
-  wget \
-  gcc \
-  musl-dev \
-  python3-dev
+  wget
 
-# Create a symbolic link for pip3 and install yt-dlp
-RUN python3 -m pip install --upgrade pip && \
-  python3 -m pip install yt-dlp
+# Install yt-dlp using --break-system-packages flag (safe in Docker)
+RUN pip3 install --break-system-packages yt-dlp
 
 # Create app directory
 WORKDIR /app
