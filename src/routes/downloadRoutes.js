@@ -1,7 +1,7 @@
-const express = require("express");
-const router = express.Router();
-const { downloadAudioFiles } = require("../controllers/downloadController");
+import express from "express";
+import { downloadAudioFiles } from "../controllers/downloadController.js";
 
+const router = express.Router();
 router.post("/download", downloadAudioFiles);
 
-module.exports = router;
+export default router;
