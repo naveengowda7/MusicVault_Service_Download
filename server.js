@@ -1,6 +1,13 @@
 import express from "express";
 import cors from "cors";
+import dotenv from "dotenv";
+import connectDB from "./src/database/connection.js";
 import downloadRoutes from "./src/routes/downloadRoutes.js";
+
+dotenv.config(); // Load .env variables
+
+// Connect to database
+connectDB();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -10,7 +17,7 @@ app.use(
     origin: [
       "https://musicvault-frontend.onrender.com",
       "http://localhost:3000",
-      "http://localhost:5173"
+      "http://localhost:5173",
     ],
     credentials: true,
     methods: "GET,POST,PUT,DELETE,OPTIONS",
