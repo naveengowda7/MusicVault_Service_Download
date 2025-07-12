@@ -1,15 +1,17 @@
-const { createClient } = require("redis");
+import { createClient } from 'redis';
 
-const redisSub = createClient({
-  username: "default",
-  password: process.env.REDIS_ID,
+const client = createClient({
+  username: 'default',
+  password: 'hVsuxkFLreWnHflApANxVpB8vcwjZHD2',
   socket: {
-    host: "redis-10383.crce182.ap-south-1-1.ec2.redns.redis-cloud.com",
-    port: 10383,
-  },
+    host: 'redis-14273.c301.ap-south-1-1.ec2.redns.redis-cloud.com',
+    port: 14273
+  }
 });
 
-redisSub.connect().catch(console.error);
+client.on('error', err => console.log('Redis Client Error', err));
+
+await client.connect();
 
 const subscribeToYouTubeLinks = async (channel, callback) => {
   try {
